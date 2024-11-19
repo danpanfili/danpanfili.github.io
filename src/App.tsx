@@ -12,6 +12,7 @@ function App() {
   const [endTime, setEndTime] = useState(0);
   const [format, setFormat] = useState<'audio' | 'video'>('audio');
   const [isLooping, setIsLooping] = useState(false);
+  const [fileName, setFileName] = useState('');
   const playerRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState(false);
 
@@ -141,11 +142,26 @@ function App() {
                   </div>
                 </div>
 
+                <div className="space-y-2">
+                  <label htmlFor="fileName" className="block text-sm font-medium text-gray-700">
+                    Output File Name
+                  </label>
+                  <input
+                    id="fileName"
+                    type="text"
+                    value={fileName}
+                    onChange={(e) => setFileName(e.target.value)}
+                    placeholder="Enter file name (optional)"
+                    className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+
                 <CommandOutput
                   url={url}
                   startTime={startTime}
                   endTime={endTime}
                   format={format}
+                  fileName={fileName}
                 />
               </div>
             </>

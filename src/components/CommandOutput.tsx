@@ -6,17 +6,20 @@ interface CommandOutputProps {
   startTime: number;
   endTime: number;
   format: 'audio' | 'video';
+  fileName?: string;
 }
 
-export function CommandOutput({ url, startTime, endTime, format }: CommandOutputProps) {
+export function CommandOutput({ url, startTime, endTime, format, fileName }: CommandOutputProps) {
   const [copied, setCopied] = useState(false);
 
   const getCommand = () => {
     const timeRange = `--download-sections "*${startTime}-${endTime}"`;
+    const filenameOption = fileName ? `-o "${fileName}.%(ext)s"` : '';
+    
     if (format === 'audio') {
-      return `yt-dlp -x --audio-format mp3 ${timeRange} ${url}`;
+      return `yt-dlp -x --audio-format mp3 ${timeRange} ${filenameOption} ${url}`;
     }
-    return `yt-dlp -f "bv*+ba/b" ${timeRange} ${url}`;
+    return `yt-dlp -f "bv*+ba/b" ${timeRange} ${filenameOption} ${url}`;
   };
 
   const handleCopy = async () => {
