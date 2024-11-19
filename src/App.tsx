@@ -62,6 +62,13 @@ function App() {
     setCommandHistory([]);
   };
 
+  const handleFolderSelect = (e) => {
+    const folder = e.target.files[0];
+    if (folder) {
+      setDownloadPath(folder.webkitRelativePath.split('/')[0]);
+    }
+  };
+
   return (
     <div className="flex h-screen">
       {/* Left Panel - Inputs */}
@@ -164,8 +171,18 @@ function App() {
                   Download Location
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FolderOpen className="h-5 w-5 text-gray-400" />
+                  <div 
+                    className="absolute inset-y-0 left-0 pl-3 flex items-center cursor-pointer"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <FolderOpen className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      webkitdirectory=""
+                      className="hidden"
+                      onChange={handleFolderSelect}
+                    />
                   </div>
                   <input
                     id="downloadPath"

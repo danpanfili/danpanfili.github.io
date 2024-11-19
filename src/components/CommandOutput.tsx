@@ -26,10 +26,22 @@ export function CommandOutput({
     const timeRange = `--download-sections "*${startTime}-${endTime}"`;
     const filenameOption = fileName ? `-o "${fileName}.%(ext)s"` : '';
     
+    var command = `python -m yt_dlp --force-keyframes-at-cuts ${timeRange} ${filenameOption}`;
+
     if (format === 'audio') {
-      return `python -m yt_dlp -x --audio-format mp3 --force-keyframes-at-cuts ${timeRange} ${filenameOption} -P "${downloadPath}" "${url}"`;
+      command += ' -x --audio-format mp3';
     }
-    return `python -m yt_dlp -f "bv*+ba/b" --force-keyframes-at-cuts ${timeRange} ${filenameOption} -P "${downloadPath}" "${url}"`;
+    else {
+      command += ' -f "bv*+ba/b"';
+    }
+
+    if (downloadPath != "") {
+      command += ` -P "${downloadPath}"`;
+    }
+
+    command += ` "${url}"`;
+
+    return command;
   };
 
   const handleCopy = async () => {
