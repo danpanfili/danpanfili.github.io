@@ -7,6 +7,7 @@ interface CommandOutputProps {
   endTime: number;
   format: 'audio' | 'video';
   fileName?: string;
+  downloadPath?: string;
   onCommandCopy?: (command: string) => void;
 }
 
@@ -16,6 +17,7 @@ export function CommandOutput({
   endTime, 
   format, 
   fileName, 
+  downloadPath,
   onCommandCopy 
 }: CommandOutputProps) {
   const [copied, setCopied] = useState(false);
@@ -25,9 +27,9 @@ export function CommandOutput({
     const filenameOption = fileName ? `-o "${fileName}.%(ext)s"` : '';
     
     if (format === 'audio') {
-      return `python -m yt_dlp -x --audio-format mp3 --force-keyframes-at-cuts ${timeRange} ${filenameOption} "${url}"`;
+      return `python -m yt_dlp -x --audio-format mp3 --force-keyframes-at-cuts ${timeRange} ${filenameOption} -P "${downloadPath}" "${url}"`;
     }
-    return `python -m yt_dlp -f "bv*+ba/b" --force-keyframes-at-cuts ${timeRange} ${filenameOption} "${url}"`;
+    return `python -m yt_dlp -f "bv*+ba/b" --force-keyframes-at-cuts ${timeRange} ${filenameOption} -P "${downloadPath}" "${url}"`;
   };
 
   const handleCopy = async () => {

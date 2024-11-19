@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import ReactPlayer from 'react-player';
-import { Youtube, AlertCircle, Copy, Trash2 } from 'lucide-react';
+import { Youtube, AlertCircle, Copy, Trash2, FolderOpen } from 'lucide-react';
 import { TimeRangeSelector } from './components/TimeRangeSelector';
 import { CommandOutput } from './components/CommandOutput';
 
@@ -13,6 +13,7 @@ function App() {
   const [format, setFormat] = useState<'audio' | 'video'>('audio');
   const [isLooping, setIsLooping] = useState(false);
   const [fileName, setFileName] = useState('');
+  const [downloadPath, setDownloadPath] = useState('');
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const playerRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState(false);
@@ -158,12 +159,35 @@ function App() {
                 />
               </div>
 
+              <div className="space-y-2">
+                <label htmlFor="downloadPath" className="block text-sm font-medium text-gray-700">
+                  Download Location
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FolderOpen className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="downloadPath"
+                    type="text"
+                    value={downloadPath}
+                    onChange={(e) => setDownloadPath(e.target.value)}
+                    placeholder="/path/to/download/folder"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  Enter the full path where files should be downloaded
+                </p>
+              </div>
+
               <CommandOutput
                 url={url}
                 startTime={startTime}
                 endTime={endTime}
                 format={format}
                 fileName={fileName}
+                downloadPath={downloadPath}
                 onCommandCopy={addToCommandHistory}
               />
             </div>
