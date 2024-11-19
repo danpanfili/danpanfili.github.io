@@ -7,9 +7,17 @@ interface CommandOutputProps {
   endTime: number;
   format: 'audio' | 'video';
   fileName?: string;
+  onCommandCopy?: (command: string) => void;
 }
 
-export function CommandOutput({ url, startTime, endTime, format, fileName }: CommandOutputProps) {
+export function CommandOutput({ 
+  url, 
+  startTime, 
+  endTime, 
+  format, 
+  fileName, 
+  onCommandCopy 
+}: CommandOutputProps) {
   const [copied, setCopied] = useState(false);
 
   const getCommand = () => {
@@ -19,11 +27,17 @@ export function CommandOutput({ url, startTime, endTime, format, fileName }: Com
     if (format === 'audio') {
       return `python -m yt_dlp -x --audio-format mp3 --force-keyframes-at-cuts ${timeRange} ${filenameOption} "${url}"`;
     }
-    return `python -m yt_dlp -f "bv*+ba/b" ${timeRange} ${filenameOption} "${url}"`;
+    return `python -m yt_dlp -f "bv*+ba/b" --force-keyframes-at-cuts ${timeRange} ${filenameOption} "${url}"`;
   };
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(getCommand());
+    const command = getCommand();
+    await navigator.clipboard.writeText(command);
+    
+    if (onCommandCopy) {
+      onCommandCopy(command);
+    }
+    
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
