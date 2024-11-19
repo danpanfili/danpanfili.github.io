@@ -18,6 +18,7 @@ export function TimeRangeSelector({
 }: TimeRangeSelectorProps) {
   const [localStartTime, setLocalStartTime] = useState(formatTimeForInput(startTime));
   const [localEndTime, setLocalEndTime] = useState(formatTimeForInput(endTime));
+  const [overlap, setOverlap] = useState(false);
 
   useEffect(() => {
     setLocalStartTime(formatTimeForInput(startTime));
@@ -27,23 +28,34 @@ export function TimeRangeSelector({
     setLocalEndTime(formatTimeForInput(endTime));
   }, [endTime]);
 
+  useEffect(() => {
+    // Check for overlap when startTime and endTime are close
+    setOverlap(Math.abs(startTime - endTime) < duration * 0.02); // Adjust threshold as needed
+  }, [startTime, endTime, duration]);
+
   function formatTimeForInput(seconds: number): string {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
     const ms = Math.round((seconds % 1) * 100);
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms
+      .toString()
+      .padStart(2, '0')}`;
   }
 
   function parseTimeInput(timeStr: string): number {
     const match = timeStr.match(/^(\d{2}):(\d{2}):(\d{2})\.(\d{2})$/);
     if (!match) return -1;
-    
+
     const [_, hours, minutes, seconds, centiseconds] = match;
-    return parseInt(hours) * 3600 + 
-           parseInt(minutes) * 60 + 
-           parseInt(seconds) + 
-           parseInt(centiseconds) / 100;
+    return (
+      parseInt(hours) * 3600 +
+      parseInt(minutes) * 60 +
+      parseInt(seconds) +
+      parseInt(centiseconds) / 100
+    );
   }
 
   function handleTimeInput(type: 'start' | 'end', value: string) {
@@ -64,16 +76,24 @@ export function TimeRangeSelector({
       #6366f1 ${(startTime / duration) * 100}%, 
       #6366f1 ${(endTime / duration) * 100}%, 
       #e5e7eb ${(endTime / duration) * 100}%, 
-      #e5e7eb 100%)`
+      #e5e7eb 100%)`,
+  };
+
+  const thumbStyle = (type: 'start' | 'end') => {
+    if (type === 'end') {
+      return overlap
+        ? { transform: 'translateY(10px)', border: '2px solid #6366f1', background: 'transparent' }
+        : { border: '2px solid #6366f1', background: 'transparent' };
+    } else if (type === 'start') {
+      return overlap ? { transform: 'translateY(-10px)' } : {};
+    }
+    return {};
   };
 
   return (
     <div className="space-y-6">
       <div className="relative pt-6">
-        <div 
-          className="absolute w-full h-2 rounded-lg"
-          style={progressStyle}
-        />
+        <div className="absolute w-full h-2 rounded-lg" style={progressStyle} />
         <input
           type="range"
           min="0"
@@ -82,6 +102,7 @@ export function TimeRangeSelector({
           value={startTime}
           onChange={(e) => onStartTimeChange(Number(e.target.value))}
           className="absolute w-full h-2 bg-transparent appearance-none pointer-events-none"
+          style={thumbStyle('start')}
         />
         <input
           type="range"
@@ -91,6 +112,7 @@ export function TimeRangeSelector({
           value={endTime}
           onChange={(e) => onEndTimeChange(Number(e.target.value))}
           className="absolute w-full h-2 bg-transparent appearance-none pointer-events-none"
+          style={thumbStyle('end')}
         />
       </div>
 
