@@ -17,9 +17,9 @@ export function CommandOutput({ url, startTime, endTime, format, fileName }: Com
     const filenameOption = fileName ? `-o "${fileName}.%(ext)s"` : '';
     
     if (format === 'audio') {
-      return `yt-dlp -x --audio-format mp3 ${timeRange} ${filenameOption} ${url}`;
+      return `python -m yt_dlp -x --audio-format mp3 --force-keyframes-at-cuts ${timeRange} ${filenameOption} "${url}"`;
     }
-    return `yt-dlp -f "bv*+ba/b" ${timeRange} ${filenameOption} ${url}`;
+    return `python -m yt_dlp -f "bv*+ba/b" ${timeRange} ${filenameOption} "${url}"`;
   };
 
   const handleCopy = async () => {
