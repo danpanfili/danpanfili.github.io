@@ -17,6 +17,7 @@ function App() {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const playerRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleUrlChange = (input: string) => {
     setUrl(input);
