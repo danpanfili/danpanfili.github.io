@@ -81,9 +81,7 @@ export function TimeRangeSelector({
 
   const thumbStyle = (type: 'start' | 'end') => {
     if (type === 'end') {
-      return overlap
-        ? { transform: 'translateY(10px)', border: '2px solid #6366f1', background: 'transparent' }
-        : { border: '2px solid #6366f1', background: 'transparent' };
+      return overlap ? { transform: 'translateY(10px)' } : {};
     } else if (type === 'start') {
       return overlap ? { transform: 'translateY(-10px)' } : {};
     }
