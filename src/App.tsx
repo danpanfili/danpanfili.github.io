@@ -17,7 +17,6 @@ function App() {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const playerRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState(false);
-  const fileInputRef = useRef(null);
 
   const handleUrlChange = (input: string) => {
     setUrl(input);
@@ -63,10 +62,14 @@ function App() {
     setCommandHistory([]);
   };
 
-  const handleFolderSelect = (e) => {
-    const folder = e.target.files[0];
-    if (folder) {
-      setDownloadPath(folder.webkitRelativePath.split('/')[0]);
+  const handleFolderSelect = async () => {
+    try {
+      // Open folder picker dialog
+      const directoryHandle = await window.showDirectoryPicker();
+      setDownloadPath(directoryHandle.name);
+    } catch (err) {
+      // User cancelled or browser doesn't support the API
+      console.log('Folder selection cancelled or not supported');
     }
   };
 
@@ -174,16 +177,9 @@ function App() {
                 <div className="relative">
                   <div 
                     className="absolute inset-y-0 left-0 pl-3 flex items-center cursor-pointer"
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={handleFolderSelect}
                   >
                     <FolderOpen className="h-5 w-5 text-gray-400 hover:text-gray-500" />
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      webkitdirectory=""
-                      className="hidden"
-                      onChange={handleFolderSelect}
-                    />
                   </div>
                   <input
                     id="downloadPath"
